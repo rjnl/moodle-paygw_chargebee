@@ -27,9 +27,9 @@ namespace paygw_chargebee;
 use ChargeBee\ChargeBee\Environment;
 use ChargeBee\ChargeBee\Models\HostedPage;
 use ChargeBee\ChargeBee\Models\Invoice;
-use context_module;
 use context_course;
 use context_block;
+use context_module;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -170,13 +170,15 @@ class chargebee_helper {
             $hostedpage->content['invoice']['customer_id'] == $this->customeridprefix . $userid
         ) {
             // Check if invoice transaction id exists in db already.
-            if (!$record = $DB->get_record(
+            $record = $DB->get_record(
                 'paygw_chargebee',
                 [
                     'transactionid' => $hostedpage->content['invoice']['linked_payments'][0]['txn_id'],
                     'userid' => $userid,
                 ]
-            )) {
+            );
+
+            if (!$record) {
                 return true;
             }
         }
@@ -240,7 +242,6 @@ class chargebee_helper {
 
                 return ['invoice' => $invoice->id, 'status' => $invoice->status];
             }
-
         } catch (\Exception $e) {
             return ['invoice' => '', 'status' => '']; // Just return empty values.
         }
@@ -265,8 +266,10 @@ class chargebee_helper {
         $record->customerid = $hostedpage->content['invoice']['customer_id'];
         $record->transactionid = $hostedpage->content['invoice']['linked_payments'][0]['txn_id'];
         $record->invoicenumber = $hostedpage->content['invoice']['id'];
-        $record->amountpaid = $this->get_paid_amount($hostedpage->content['invoice']['amount_paid'],
-            $hostedpage->content['invoice']['currency_code']);
+        $record->amountpaid = $this->get_paid_amount(
+            $hostedpage->content['invoice']['amount_paid'],
+            $hostedpage->content['invoice']['currency_code']
+        );
 
         $DB->insert_record('paygw_chargebee', $record);
 

@@ -33,7 +33,6 @@ use paygw_chargebee\chargebee_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class finalise_transaction extends \core\task\adhoc_task {
-
     /**
      * The finalise transaction task processing.
      *
@@ -66,25 +65,32 @@ class finalise_transaction extends \core\task\adhoc_task {
         switch ($result->state) {
             case $chargebeehelper::STATE_ACKNOWLEDGED:
                 // Payment record should already be updated locally, but double check it anyway.
-                if ($result->content['invoice']['status'] === 'paid' &&
-                    $DB->record_exists('paygw_chargebee',
-                    [
-                        'invoicenumber' => $result->content['invoice']['id'],
-                        'transactionid' => $result->content['invoice']['linked_payments'][0]['txn_id'],
-                    ])
+                if (
+                    $result->content['invoice']['status'] === 'paid' &&
+                    $DB->record_exists(
+                        'paygw_chargebee',
+                        [
+                            'invoicenumber' => $result->content['invoice']['id'],
+                            'transactionid' => $result->content['invoice']['linked_payments'][0]['txn_id'],
+                        ]
+                    )
                 ) {
                     // All good. Nothing to do.
                     mtrace(' + Invoice #: ' . $result->content['invoice']['id']);
                     mtrace('=== Nothing to do... ===');
                 }
-            break;
+                break;
             case $chargebeehelper::STATE_SUCCEEDED:
                 // Payment record should already be updated locally, but double check it anyway.
-                if ($DB->record_exists('paygw_chargebee',
-                    [
-                        'invoicenumber' => $result->content['invoice']['id'],
-                        'transactionid' => $result->content['invoice']['linked_payments'][0]['txn_id'],
-                    ])) {
+                if (
+                    $DB->record_exists(
+                        'paygw_chargebee',
+                        [
+                            'invoicenumber' => $result->content['invoice']['id'],
+                            'transactionid' => $result->content['invoice']['linked_payments'][0]['txn_id'],
+                        ]
+                    )
+                ) {
                     // Under normal circumstance, this should not happen.
                     // Send acknowledgement that we've processed this payment.
                     HostedPage::acknowledge($data->remotereference);
@@ -115,7 +121,8 @@ class finalise_transaction extends \core\task\adhoc_task {
 
                     // Log events.
                     // Transaction successful.
-                    $chargebeehelper->log_event(CHARGEBEE_TRANSACTION_SUCCESSFUL,
+                    $chargebeehelper->log_event(
+                        CHARGEBEE_TRANSACTION_SUCCESSFUL,
                         [
                             'component' => $data->component,
                             'paymentarea' => $data->paymentarea,
@@ -126,7 +133,8 @@ class finalise_transaction extends \core\task\adhoc_task {
                     );
 
                     // Transaction complete.
-                    $chargebeehelper->log_event(CHARGEBEE_TRANSACTION_COMPLETED,
+                    $chargebeehelper->log_event(
+                        CHARGEBEE_TRANSACTION_COMPLETED,
                         [
                             'component' => $data->component,
                             'paymentarea' => $data->paymentarea,
@@ -153,7 +161,8 @@ class finalise_transaction extends \core\task\adhoc_task {
                         if ($chargebeeresult['status'] == 'voided') {
                             mtrace(' - Voiding Invoice #: ' . $invoice->id);
                             // Log event.
-                            $chargebeehelper->log_event(CHARGEBEE_VOID_INVOICE_SUCCESSFUL,
+                            $chargebeehelper->log_event(
+                                CHARGEBEE_VOID_INVOICE_SUCCESSFUL,
                                 [
                                     'component' => $data->component,
                                     'paymentarea' => $data->paymentarea,
@@ -162,7 +171,8 @@ class finalise_transaction extends \core\task\adhoc_task {
                                 ]
                             );
                             // Transaction complete.
-                            $chargebeehelper->log_event(CHARGEBEE_TRANSACTION_COMPLETED,
+                            $chargebeehelper->log_event(
+                                CHARGEBEE_TRANSACTION_COMPLETED,
                                 [
                                     'component' => $data->component,
                                     'paymentarea' => $data->paymentarea,
@@ -171,7 +181,8 @@ class finalise_transaction extends \core\task\adhoc_task {
                             );
                         } else {
                             // Log event.
-                            $chargebeehelper->log_event(CHARGEBEE_VOID_INVOICE_FAILED,
+                            $chargebeehelper->log_event(
+                                CHARGEBEE_VOID_INVOICE_FAILED,
                                 [
                                     'component' => $data->component,
                                     'paymentarea' => $data->paymentarea,
@@ -182,7 +193,7 @@ class finalise_transaction extends \core\task\adhoc_task {
                         }
                     }
                 }
-            break;
+                break;
             case $chargebeehelper::STATE_REQUESTED:
                 // Status is still "requested".
                 // Let's try again one more time.
@@ -203,7 +214,7 @@ class finalise_transaction extends \core\task\adhoc_task {
                     // Just drop it.
                     mtrace('=== Nothing to do... ===');
                 }
-            break;
+                break;
         }
     }
 }

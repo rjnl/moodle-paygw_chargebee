@@ -25,8 +25,9 @@
 namespace paygw_chargebee\privacy;
 
 use core_privacy\local\metadata\collection;
-use core_payment\privacy\paygw_provider;
+use core_privacy\local\request\data_provider;
 use core_privacy\local\request\writer;
+use core_payment\privacy\paygw_provider;
 
 /**
  * Privacy Subsystem implementation for paygw_chargebee.
@@ -34,11 +35,7 @@ use core_privacy\local\request\writer;
  * @copyright  2022 Rajneel Totaram <rajneel.totaram@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements
-    \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\data_provider,
-    paygw_provider {
-
+class provider implements data_provider, paygw_provider, \core_privacy\local\metadata\provider {
     /**
      * Returns metadata about this plugin.
      *

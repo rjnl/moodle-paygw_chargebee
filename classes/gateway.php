@@ -64,7 +64,7 @@ class gateway extends \core_payment\gateway {
      */
     public static function get_zero_decimal_currencies(): array {
         return [
-            'CLP', 'JPY', 'KRW', 'VND',  'XAF', 'XOF',
+            'CLP', 'JPY', 'KRW', 'VND', 'XAF', 'XOF',
         ];
     }
 
@@ -107,8 +107,7 @@ class gateway extends \core_payment\gateway {
      * @param array $files
      * @param array $errors form errors (passed by reference)
      */
-    public static function validate_gateway_form(account_gateway $form,
-        \stdClass $data, array $files, array &$errors): void {
+    public static function validate_gateway_form(account_gateway $form, \stdClass $data, array $files, array &$errors): void {
         if ($data->enabled && (empty($data->apikey) || empty($data->sitename))) {
             $errors['enabled'] = get_string('gatewaycannotbeenabled', 'payment');
         }

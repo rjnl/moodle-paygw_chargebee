@@ -71,7 +71,8 @@ $task->set_next_run_time(time() + 900); // Run thus task after 15 minutes.
 \core\task\manager::queue_adhoc_task($task, true);
 
 // Log event.
-$chargebeehelper->log_event(CHARGEBEE_TRANSACTION_STARTED,
+$chargebeehelper->log_event(
+    CHARGEBEE_TRANSACTION_STARTED,
     [
         'component' => $component,
         'paymentarea' => $paymentarea,

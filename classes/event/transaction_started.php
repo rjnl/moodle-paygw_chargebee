@@ -30,7 +30,6 @@ namespace paygw_chargebee\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class transaction_started extends \core\event\base {
-
     /**
      * Init method.
      */
@@ -71,7 +70,6 @@ class transaction_started extends \core\event\base {
         return new \moodle_url('/course/view.php', ['id' => $this->courseid]);
     }
 
-
     /**
      * Custom validation.
      *
@@ -87,5 +85,4 @@ class transaction_started extends \core\event\base {
             throw new \coding_exception('The \'component\' value must be set in other.');
         }
     }
-
 }
