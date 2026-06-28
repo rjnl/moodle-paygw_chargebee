@@ -16,19 +16,19 @@
 /**
  * This module is responsible for Chargebee content in the gateway's modal.
  *
- * @module     paygw_chargebee/gateway_modal
+ * @module     paygw_chargebee/gateways_modal
  * @copyright  2022 Rajneel Totaram <rajneel.totaram@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import Templates from 'core/templates';
-import ModalFactory from 'core/modal_factory';
+import Modal from 'core/modal';
 
 const showModalWithPlaceholder = async() => {
-    const modal = await ModalFactory.create({
-        body: await Templates.render('paygw_chargebee/chargebee_button_placeholder', {})
+    Modal.create({
+        body: await Templates.render('paygw_chargebee/chargebee_button_placeholder', {}),
+        show: true
     });
-    modal.show();
 };
 
 export const process = (component, paymentArea, itemId, description) => {
